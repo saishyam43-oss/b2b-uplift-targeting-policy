@@ -10,325 +10,108 @@
 
 ## ⚡ Executive Snapshot
 
-**What this is**
-- A decision system that determines **which B2B accounts should be nudged and which should be left alone**, using causal uplift modeling and explicit safety guardrails.
+**The Problem** Blind nudging generates **~$56K** in short-term value but introduces asymmetric risk by exposing **281 Admins** to unwanted interventions. In B2B, irritating an Admin triggers account-level churn.
 
-**How to read this**
-- Skim the visuals and bold insights first.
-- Read deeper only if you want to understand *how* the decisions were built and validated.
+**My Solution** I designed a **Precision Targeting Policy** using Causal Uplift Modeling (T-Learner) wrapped in explicit safety guardrails.
 
-**Key outcome**
-- Blind nudging generates **~$56K** short-term value but risks **churning 281 admins**.
-- A precision policy targets **~40% of accounts**, captures **~80% of total value**, and **avoids all high-risk admin interventions**.
-- Output is a **production-ready account policy**, not a model score.
-
-➡️ **Decision**: Ship the Precision Policy. Do not ship blanket nudges.
+**Key Outcomes** - **Safety:** I avoided **100%** of high-risk "Sleeping Dog" accounts (0.00% error rate).
+- **Efficiency:** I captured **~80% of total upside** by targeting just the top **40%** of accounts.
+- **Decision:** ➡️ **Ship the Precision Policy.** I rejected the blanket nudge approach to protect long-term retention.
 
 ---
 
 ## 🏢 Company Background
 
-**Causalyn** is a fictional B2B SaaS company that provides a collaboration and workflow platform used by mid-market and enterprise teams.
+**Causalyn** is a fictional B2B SaaS company providing a workflow platform for enterprise teams.
 
 The product’s success depends on **multi-user adoption within an account**, where:
-- Individual users drive engagement
-- Admins and power users control configuration, rollout, and renewal decisions
-- A single negative admin experience can outweigh dozens of positive user interactions
-
-The company frequently uses **in-product nudges** (emails, banners, feature prompts) to encourage adoption of collaborative features tied to long-term retention.
-
----
-
-## 📍 Project Context
-
-Causalyn planned to roll out a new collaboration feature and considered **nudging all active users** to accelerate adoption.
-
-However, prior experiments showed mixed results:
-- Some users adopted quickly after nudges
-- Others would have adopted anyway
-- A non-trivial segment reacted negatively, especially admins and power users
-
-The open question was not:
-> “Who is likely to convert?”
-
-But rather:
-> **“Who should we intervene on, who should we leave alone, and why?”**
-
-This project was built to answer that question **before shipping a risky, account-wide intervention**.
-
----
-
-## 👥 Stakeholders & Decisions
-
-**VP Product**
-- Decide whether to ship a blanket nudge or a targeted rollout
-- Balance short-term activation against long-term churn risk
-
-**Growth / Lifecycle Team**
-- Identify which accounts should receive interventions
-- Prioritize limited rollout and experimentation budget
-
-**Data / Analytics**
-- Provide decision logic that is auditable and defensible
-- Explain *why* accounts are targeted or suppressed, not just score them
-
-This project’s output is designed to directly support these decisions with **clear policies**, not opaque model predictions.
+- **Users** drive daily engagement.
+- **Admins** control renewals and configuration.
+- **Asymmetry:** A single negative Admin experience ("Rage Churn") outweighs dozens of positive User interactions.
 
 ---
 
 ## 🧠 Executive Summary
 
-### 1️⃣ Policy Funnel — How 2,400 Accounts Became 964 Targets
-<p align="center">
-  <img src="images/01_policy_funnel.png" width="700"/>
-</p>
+### 1. The Strategy: "Risk Filters First"
+I started with 2,400 accounts. My policy explicitly eliminated **60%** of the population before optimization began, prioritizing safety (Toxic Admins) and economics (Profitability) over raw lift.
 
-- 60% of accounts are suppressed *before* value optimization.
-- Suppression is driven by **risk and economics**, not model uncertainty.
+![Policy Funnel](images/01_policy_funnel.png)
 
----
+### 2. The Trade-off: "Revenue vs. Churn Risk"
+My analysis proved that while "Blind Nudging" (targeting everyone) maximizes theoretical revenue, it risks churning **281 Admins**. I chose to sacrifice ~40% of the potential revenue to reduce this risk to **zero**.
 
-### 2️⃣ Risk vs Reward — Why Blind Nudging Is Dangerous
-<p align="center">
-  <img src="images/02_risk_vs_reward.png" width="700"/>
-</p>
+![Risk vs Reward](images/02_risk_vs_reward.png)
 
-- Blind nudging maximizes short-term revenue.
-- It exposes **281 admins** to negative interventions, creating asymmetric downside.
+### 3. The Efficiency: "Diminishing Returns"
+I identified that value is highly concentrated. By ranking accounts by **Net Expected Value**, we can capture **80% of the total upside** by targeting just the top **40%** of accounts.
 
----
+![Budget Efficiency](images/03_budget_efficiency.png)
 
-### 3️⃣ Budget Efficiency — Where the Value Actually Comes From
-<p align="center">
-  <img src="images/03_budget_efficiency.png" width="700"/>
-</p>
+### 4. The Audit: "Zero Sleeping Dogs"
+I validated the policy against a hidden ground-truth dataset. The results confirmed that my guardrails successfully suppressed **100%** of the "Sleeping Dog" segment.
 
-- ~80% of net value comes from ~40% of accounts.
-- Enables aggressive budget cuts without proportional value loss.
-
----
-
-### 4️⃣ Uplift Distribution — Guardrails Are Working
-<p align="center">
-  <img src="images/04_uplift_distribution.png" width="700"/>
-</p>
-
-- Targeted accounts skew strongly positive uplift.
-- Suppressed accounts cluster near zero or negative uplift.
-- Validation does **not** rely on hidden ground truth.
-
----
-
-### 5️⃣ Failure Mode Audit — How the System Fails
-<p align="center">
-  <img src="images/05_failure_matrix.png" width="700"/>
-</p>
-
-- **0% of Sleeping Dogs** are targeted.
-- Errors bias toward **under-targeting**, not harmful over-targeting.
+![Safety Audit](images/05_failure_matrix.png)
 
 ---
 
 ## 📌 Consolidated Insights & Recommendations
 
-### Key Insights
+### What My Analysis Revealed
+1.  **Economic Units Matter:** Aggregating user scores to the account level reversed the decision for **~15% of accounts**, saving us from intervening in accounts with mixed sentiment.
+2.  **Risk is Non-Linear:** High-activity users were often the most likely to react negatively (-4% lift). A standard propensity model would have targeted them; my causal model flagged them.
+3.  **Guardrails > Thresholds:** Explicit business rules (e.g., "No Toxic Admins") proved more reliable than probability thresholds alone.
 
-- **Prediction does not equal decision**
-  - Many users with high conversion likelihood would have converted without intervention.
-  - Intervening on them adds cost without incremental value.
-
-- **Intervention risk is asymmetric in B2B**
-  - A single negative admin experience can outweigh dozens of successful user activations.
-  - Risk must be explicitly modeled, not inferred from averages.
-
-- **Uplift effects are non-linear**
-  - High activity does not imply positive treatment effect.
-  - Some highly engaged users (especially admins) are *Sleeping Dogs* who react negatively to nudges.
-
-- **Economic decisions must operate at the account level**
-  - User-level uplift signals must be aggregated into account-level value.
-  - Optimizing users independently produces misleading results in B2B contexts.
-
-- **Value is heavily front-loaded**
-  - A minority of accounts drive the majority of net value.
-  - This enables budget-aware rollouts without material loss.
+### My Recommendations
+* **Targeting:** Roll out the intervention only to the **964 accounts** identified in [`results/final_target_accounts.csv`](results/final_target_accounts.csv).
+* **Suppression:** Strictly suppress any account where a Key Decision Maker (Admin) shows negative predicted lift.
+* **Budget:** Cap the campaign at the top 40% of accounts to maximize ROI.
 
 ---
 
-### Actionable Recommendations
+## 🔍 The Challenge: Overcoming Selection Bias
 
-**1. Replace blanket nudges with a Precision Account Policy**
-- Do not nudge all active users.
-- Deploy interventions only to accounts that pass **risk, scale, and profitability gates**.
+The raw data contained a critical trap: **Selection Bias.**
+Historically, CSMs targeted "Active Users" more often. However, these users were often "Sleeping Dogs" (annoyed by interruptions).
 
-**2. Rank accounts by expected net value, not uplift alone**
-- Convert user-level uplift into **expected dollar value**.
-- Subtract intervention cost to prioritize economically justified accounts.
-
-**3. Enforce hard suppression rules**
-- Suppress any account if:
-  - An admin is predicted to experience negative uplift.
-  - More than 10% of users show negative treatment effect.
-  - The account size is too small to justify intervention cost.
-
-**4. Treat conservatively when uncertain**
-- Bias errors toward under-targeting rather than harmful over-targeting.
-- Accept missed upside to eliminate churn risk.
-
-**5. Roll out in budget-constrained phases**
-- Start with the top ~40% of ranked accounts.
-- Capture ~80% of total value while minimizing exposure.
-- Expand only if results remain stable.
-
-**6. Operationalize transparency**
-- Provide stakeholders with:
-  - A final target list
-  - Explicit suppression reasons per account
-  - Expected value estimates
-- Avoid opaque model-only decisions.
+* **The Neutrality Gap:** This created a bias where the Treated group appeared to have a **lower average conversion** (-0.04 lift) than Control.
+* **The Fix:** I implemented a **Calibrated T-Learner** (Two-Model approach).
+* **The Result:** By calibrating the probabilities, I isolated the *incremental* effect of the intervention, separating "likely to buy" (Correlation) from "likely to be persuaded" (Causality).
 
 ---
 
-### Decision Summary
+## 🛡️ Policy Design & Safety Mechanisms
 
-If implemented in production:
-- **964 accounts** should be targeted immediately.
-- **~60% of accounts** should be intentionally suppressed.
-- **281 admin-level churn risks** are avoided by design.
-- The system optimizes for **long-term account health**, not short-term activation spikes.
+Prediction is not a decision. I engineered a policy layer to translate scores into actions.
 
----
-
-## 🛡️ Policy Design
-
-### Insight → Rule Mapping
-
-**Insight: Prediction ≠ Decision**
-- High conversion likelihood does not imply positive intervention impact.  
-**Policy**: Rank by **uplift (incremental impact)**, not propensity.
-
-**Insight: Risk Is Non-Linear**
-- High-activity users can be harmed by nudges.  
-**Policy**: Suppress any account with **admin-level negative uplift**.
-
-**Insight: Accounts Are the Economic Unit**
-- User-level wins can destroy account-level value.  
-**Policy**: Aggregate uplift → **expected net value at account level**.
-
-**Insight: Value Is Front-Loaded**
-- Most value comes from a minority of accounts.  
-**Policy**: Support phased rollout using **budget efficiency curves**.
+| Protocol | The Logic | My Implementation |
+| :--- | :--- | :--- |
+| **Toxic Admin Protocol** | Admins control the contract. | If *any* Admin has negative predicted lift, suppress the *entire* account. |
+| **Toxic User Threshold** | Users talk to each other. | Suppress accounts where >10% of users are predicted to react negatively. |
+| **Profitability Constraint** | Support costs are real. | Suppress accounts where `(Exp. Revenue - Cost) <= 0`. |
 
 ---
 
-## 🧪 Modeling & Validation
+## 📂 Project Structure & Code
 
-**The Confounding Problem**
-- High-activity users were **more likely to be treated**.
-- High-activity users were **more likely to convert anyway**.
-- A naive model would overstate treatment impact.
+This repository mirrors a production data science workflow. Click the links to view the source code.
 
-**How This Was Addressed**
-- Treatment bias explicitly injected during data generation.
-- Uplift modeling used to isolate **incremental effect**, not correlation.
-- Validation focused on:
-  - Treatment neutrality
-  - Directional alignment
-  - Failure-mode bias (false positives vs false negatives)
-
-**Why Accuracy Metrics Were Deprioritized**
-- AUC measures prediction quality.
-- This system is evaluated on **decision quality and safety**.
-
----
-
-## 🧬 Data Generation & Ground Truth
-
-- Synthetic B2B SaaS data engineered to replicate:
-  - Heavy-tailed activity
-  - Selection bias in treatment
-  - Non-linear treatment effects
-- Latent uplift groups used **only for post-hoc audit**, never training.
-
----
-
-## 📂 Repository Structure
-
-```text
-b2b-uplift-modeling-account-policy
-│
-├── data/
-│   ├── documentation/
-│   │   ├── cleaning_decisions.md          # Explicit record of what data issues were fixed vs intentionally left untouched
-│   │   ├── data_quality_summary.md        # Before/after data quality metrics used to validate cleaning impact
-│   │   ├── data_readiness_report.md       # Assessment of whether data is suitable for causal modeling
-│   │   ├── generation_report.md           # Design notes and assumptions behind synthetic data generation
-│   │   ├── results.txt                    # Sanity-check outputs from validation runs
-│   │   └── schema_manifest.txt            # Formal schema definitions for all raw and processed tables
-│   │
-│   ├── raw/                               # Immutable raw inputs (never modified downstream)
-│   │   ├── accounts_raw.csv               # Account-level metadata (plan, size, tier)
-│   │   ├── users_raw.csv                  # User-to-account mapping and role information
-│   │   ├── user_activity_daily_raw.csv    # Sparse daily activity logs (logins, actions)
-│   │   ├── interventions_raw.csv          # Which users were eligible and treated, with timestamps
-│   │   ├── outcomes_raw.csv               # Observed outcomes after intervention window
-│   │   └── latent_uplift_groups_hidden.csv# Hidden ground truth (used only for audit, never modeling)
-│   │
-│   ├── processed/
-│   │   └── modeling_base_user_level.csv   # Cleaned, temporally valid modeling base table
-│   │
-│   └── features/
-│       └── features_user_level.csv        # Final feature matrix used for uplift modeling
-│
-├── images/                                # Executive-ready visuals used in README and presentations
-│   ├── 01_policy_funnel.png               # Account filtering funnel (risk → scale → value)
-│   ├── 02_risk_vs_reward.png              # Blind nudging vs precision policy trade-off
-│   ├── 03_budget_efficiency.png           # Cumulative value vs % of accounts targeted
-│   ├── 04_uplift_distribution.png         # Predicted uplift split by policy decision
-│   ├── 05_failure_matrix.png              # Hidden truth audit of targeting errors
-│   └── logo_causalyn.png                  # Project/company logo
-│
-├── results/                               # Decision artifacts produced by the system
-│   ├── user_uplift_scores.csv             # User-level predicted uplift scores
-│   ├── account_policy_debug.csv           # Full account-level aggregation and suppression reasons
-│   ├── final_target_accounts.csv          # Deployable list of accounts approved for intervention
-│   └── failure_mode_analysis.txt          # Explicit accounting of false positives / negatives
-│
-└── src/
-    ├── 01_data_generation/                # Synthetic data generation with causal structure
-    │   ├── 01_accounts_users.py            # Generate accounts and users with realistic distributions
-    │   ├── 02_generate_user_activity_daily_raw.py  # Create sparse daily activity logs
-    │   ├── 03_assign_latent_uplift_groups.py       # Assign hidden uplift archetypes
-    │   ├── 04_assign_interventions_raw.py          # Eligibility logic + biased treatment assignment
-    │   ├── 05_generate_outcomes_raw.py              # Counterfactual outcome generation
-    │   └── validation/
-    │       ├── 01_validate_data.py         # Cross-table sanity checks and causal consistency tests
-    │       └── 02_record_schema.py          # Schema snapshotting for reproducibility
-    │
-    ├── 02_data_cleaning/
-    │   └── data_cleaning.py                # Cleaning sparse, noisy logs without label leakage
-    │
-    ├── 03_feature_engineering/
-    │   └── feature_engineering.py          # Decision-oriented feature construction (momentum, intensity)
-    │
-    ├── 04_modeling/
-    │   └── train_uplift_model.py            # T-Learner uplift modeling with validation checks
-    │
-    ├── 05_policy/
-    │   └── account_policy.py                # Account-level aggregation, guardrails, and final decisions
-    │
-    └── 06_visualization/
-        └── visualize_impact.py              # Executive visualizations for value, risk, and safety
-
-```
+| Directory | Description | Key Files |
+| :--- | :--- | :--- |
+| [📂 **data**](data/) | Synthetic B2B SaaS data (Users, Activity, Outcomes) | [`documentation/`](data/documentation/) |
+| [📂 **src/01_data_generation**](src/01_data_generation/) | Confounding engine and ground truth generation | [`main_generation_pipeline.py`](src/01_data_generation/main_generation_pipeline.py) |
+| [📂 **src/02_data_processing**](src/02_data_processing/) | Cleaning and Feature Engineering | [`02_feature_engineering.py`](src/02_data_processing/02_feature_engineering.py) |
+| [📂 **src/03_models**](src/03_models/) | T-Learner training & Policy Logic | [`train_uplift_model.py`](src/03_models/train_uplift_model.py), [`account_policy.py`](src/03_models/account_policy.py) |
+| [📂 **src/04_visualization**](src/04_visualization/) | Impact Analysis & Chart Generation | [`visualize_impact.py`](src/04_visualization/visualize_impact.py) |
+| [📂 **results**](results/) | Final outputs and audit logs | [`final_target_accounts.csv`](results/final_target_accounts.csv) |
 
 ---
 
 ## ⚠️ Limitations
 
-- Synthetic environment designed for decision realism, not statistical benchmarking  
-- Static policy (no online learning or adaptive feedback loop)  
-- No long-term churn or downstream revenue attribution modeled  
+* **Synthetic Environment:** Designed for decision realism, not statistical benchmarking.
+* **Static Policy:** No online learning or adaptive feedback loop.
+* **Attribution:** No long-term churn or downstream revenue attribution modeled.
 
 These constraints are intentional to keep the project focused on **decision design**, not platform engineering.
 
@@ -336,19 +119,21 @@ These constraints are intentional to keep the project focused on **decision desi
 
 ## 🔮 What I’d Do Next in Production
 
-- Introduce **LTV-weighted uplift** instead of flat value per activation  
-- Add **online policy learning** with delayed outcome feedback  
-- Extend from single-treatment to **multi-treatment optimization**  
-- Integrate with experimentation platforms for controlled rollout  
+1.  **LTV-Weighted Uplift:** Optimize for Lifetime Value rather than one-time activation.
+2.  **Online Policy Learning:** Implement a Contextual Bandit to adapt the policy in real-time.
+3.  **Experimentation:** Integrate with A/B testing infrastructure to validate the "Toxic Admin" hypothesis in the wild.
 
 ---
 
 ## 🛠️ Tech Stack
 
-Python · pandas · scikit-learn · matplotlib · Git
+![Python](https://img.shields.io/badge/Python-3.9+-blue?style=flat-square&logo=python)
+![Pandas](https://img.shields.io/badge/pandas-Data_Processing-150458?style=flat-square&logo=pandas)
+![Scikit-Learn](https://img.shields.io/badge/scikit--learn-Causal_Modeling-F7931E?style=flat-square&logo=scikit-learn)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557c?style=flat-square&logo=python)
 
 ---
 
 ## 📣 Call to Action
 
-This project reflects how I approach **Product Analytics and Decision Science** problems where the goal is not better models, but **better decisions under risk**.
+This project reflects how I approach **Product Analytics and Decision Science** problems where the goal is not just better models, but **better decisions under risk**.
