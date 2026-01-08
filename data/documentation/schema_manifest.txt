@@ -1,0 +1,75 @@
+PROJECT SCHEMA MANIFEST
+=======================
+
+FILE: accounts_raw.csv
+----------------------
+Rows: 2,500
+Columns:
+         Column Name Data Type  Sample Nulls
+          account_id    object             0
+account_created_date    object             0
+           plan_tier    object             0
+            industry    object             0
+          seat_count     int64             0
+    cs_assigned_flag     int64             0
+account_health_score   float64             0
+
+FILE: users_raw.csv
+-------------------
+Rows: 28,607
+Columns:
+       Column Name Data Type  Sample Nulls
+           user_id    object             0
+        account_id    object             0
+ user_created_date    object             0
+         role_type    object             0
+        geo_region    object            21
+invited_by_user_id    object            71
+
+FILE: user_activity_daily_raw.csv
+---------------------------------
+Rows: 444,333
+Columns:
+            Column Name Data Type  Sample Nulls
+                user_id    object             0
+          activity_date    object             0
+             login_flag     int64             0
+      core_action_count     int64             0
+    collab_action_count     int64             0
+     time_spent_minutes     int64             0
+feature_diversity_count     int64             0
+
+FILE: interventions_raw.csv
+---------------------------
+Rows: 12,610
+Columns:
+      Column Name Data Type  Sample Nulls
+  intervention_id    object             0
+          user_id    object             0
+       account_id    object             0
+intervention_date    object             0
+ eligibility_flag     int64             0
+   treatment_flag     int64             0
+ delivery_channel    object             0
+
+FILE: outcomes_raw.csv
+----------------------
+Rows: 12,610
+Columns:
+          Column Name Data Type  Sample Nulls
+              user_id    object             0
+      intervention_id    object             0
+collab_activated_flag   float64             9
+      activation_date    object            79
+  outcome_window_days     int64             0
+
+FILE: latent_uplift_groups_hidden.csv
+-------------------------------------
+Rows: 28,607
+Columns:
+        Column Name Data Type  Sample Nulls
+            user_id    object             0
+latent_uplift_group    object             0
+
+=======================
+End of Manifest
