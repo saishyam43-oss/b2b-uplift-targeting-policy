@@ -17,7 +17,7 @@
 **Key Outcomes:**
 - **Safety:** I avoided **100%** of high-risk "Sleeping Dog" accounts (0.00% error rate).
 - **Efficiency:** The policy captures **~80% of the precision-policy value** using **~61% of the targeting budget**.
-- **Decision:** ➡️ ➡️ **Ship the Precision Policy.** While it captures less total revenue than a blind nudge (~$32k vs $56k, **~57%** of unconstrained upside), it reduces the **Admin Churn Risk to near-zero**.
+- **Decision:** ➡️**Ship the Precision Policy.** While it captures less total revenue than a blind nudge (~$32k vs $56k), it reduces the **Admin Churn Risk to near-zero**.
 
 ***Note**: The zero-error result holds against the simulated ground truth and demonstrates policy correctness, not a claim of perfect real-world performance.*
 
@@ -60,7 +60,7 @@ My analysis proved that while "Blind Nudging" (targeting everyone) maximizes the
 * **Efficiency:** The Precision policy captures **57% of the total potential value** while incurring **0% of the Admin risk**.
 
 ### 3. The Efficiency: "Diminishing Returns"
-I identified that value is highly concentrated. By ranking accounts by **Net Expected Value**, we can capture **80% of the total upside** by targeting the top **~61%** of accounts, beyond which returns diminish sharply.
+I identified that value is highly concentrated even within the safe list. By ranking accounts by **Net Expected Value**, we can capture **80% of the campaign's value** by targeting the top **~61%** of the eligible accounts.
 
 ![Budget Efficiency](images/03_budget_efficiency.png)
 * **Pareto Efficiency:** The curve shows strong value concentration early. Approximately **61% of targeted accounts capture 80% of precision-policy value**, while the remaining accounts contribute progressively smaller incremental gains.
