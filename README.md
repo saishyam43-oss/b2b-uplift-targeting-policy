@@ -14,7 +14,8 @@
 
 **My Solution:** I designed a **Precision Targeting Policy** using Causal Uplift Modeling (T-Learner) wrapped in explicit safety guardrails.
 
-**Key Outcomes:** - **Safety:** I avoided **100%** of high-risk "Sleeping Dog" accounts (0.00% error rate).
+**Key Outcomes:**
+- **Safety:** I avoided **100%** of high-risk "Sleeping Dog" accounts (0.00% error rate).
 - **Efficiency:** I captured **~80% of total upside** by targeting just the top **40%** of accounts.
 - **Decision:** ➡️ **Ship the Precision Policy.** I rejected the blanket nudge approach to protect long-term retention.
 
