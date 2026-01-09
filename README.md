@@ -150,13 +150,13 @@ I rejected standard approaches in favor of Causal Inference to avoid the "Active
 
 ## 🛡️ Policy Design & Safety Mechanisms
 
-Prediction is not a decision. I engineered a policy layer to translate scores into actions.
+Prediction is not a decision. I engineered a policy layer to translate scores into business actions. These three specific gates reduced the population from 2,400 to the final 964 targets.
 
 | Protocol | The Logic | My Implementation |
 | :--- | :--- | :--- |
-| **Toxic Admin Protocol** | Admins control the contract. | If *any* Admin has negative predicted lift, suppress the *entire* account. |
-| **Toxic User Threshold** | Users talk to each other. | Suppress accounts where >10% of users are predicted to react negatively. |
-| **Economic Viability** | Support costs are real. | Suppress accounts where `Expected_Revenue < Intervention_Cost` (e.g., small accounts where even a win is unprofitable). |
+| **1. Toxic Admin Protocol** | **Safety (Contract Risk):** Admins control renewals. A single annoyed Admin outweighs 10 happy users. | **Strict Veto:** If *any* Admin in an account has negative predicted lift, suppress the *entire* account (281 accounts). |
+| **2. Toxic User Threshold** | **Health (Workflow Friction):** If many users react negatively, it indicates systemic product friction, not a marketing opportunity. | **Density Check:** Suppress any account where **>10% of users** are predicted to be "Sleeping Dogs" (937 accounts). |
+| **3. Economic Viability** | **ROI (Unit Economics):** Even if lift is positive, it must be large enough to cover the cost of the intervention ($7). | **Profit Gate:** Suppress accounts where `(Exp. Revenue - Cost) <= 0`. This filters out "Sure Things" and small accounts (220 accounts). |
 
 ---
 
