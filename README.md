@@ -12,6 +12,25 @@
 
 ---
 
+## 🧭 Decision Summary
+
+**Decision:** Ship the Precision Targeting Policy  
+
+**Why:** Blind nudging maximizes short-term revenue but introduces unacceptable account-level churn risk by irritating Admin users.
+
+**Trade-off Accepted:** Sacrificed ~40% of theoretical short-term revenue to eliminate catastrophic Admin churn risk.
+
+**Outcome:**  
+- Captured ~80% of policy value using ~61% of eligible accounts  
+- Achieved 0% Admin-risk exposure through explicit safety guardrails  
+
+**Confidence:** Validated against simulated ground truth, uplift separation diagnostics, and failure-mode audits.
+
+**Owner:** Product Analytics / Decision Science
+
+
+---
+
 ## ⚡ Executive Snapshot
 
 **The Problem:** Blind nudging generates **~$56K** in short-term value but introduces asymmetric risk by exposing **281 Admins** to unwanted interventions. In B2B, irritating an Admin triggers account-level churn.
@@ -90,6 +109,9 @@ I audited the policy against a hidden ground-truth dataset. The results confirme
 * **Conservative Bias:** The policy targeted only **45.9%** of the "Persuadables."
     * *Insight:* The system accepts missing some opportunities (False Negatives) to ensure it never causes harm (False Positives).
 * **Lost Cause Filtering:** **59.4%** of "Lost Causes" were correctly suppressed, preventing wasted effort on customers who are resistant to intervention.
+
+*This project is a decision system that translates causal estimates into deployable business policy with explicit risk controls.*
+
 ---
 
 ## 📌 Consolidated Insights & Recommendations
@@ -114,7 +136,21 @@ I audited the policy against a hidden ground-truth dataset. The results confirme
 
 ---
 
-## 🔬 Technical Methodology
+## 🚨 Failure Modes I Explicitly Designed Against
+
+This policy was designed to prevent common but costly failure modes in B2B experimentation and targeting systems:
+
+- **Targeting “Sure Things”** who would convert without intervention, wasting budget  
+- **Irritating Admin users** whose negative reaction can trigger account-level churn  
+- **Positive-lift but ROI-negative accounts** where intervention cost exceeds value  
+- **Selection bias artifacts** where treated users appear worse due to historical targeting bias  
+- **Score-only decisioning** without business guardrails to prevent asymmetric risk
+
+Every suppression rule exists to eliminate one of these failure modes.
+
+---
+
+## 🔬 ## 🔬 Technical Methodology (In Service of Decision Safety)
 
 ### 1. Data Engineering: Simulating Behavioral Archetypes
 Since real causal ground truth is impossible to observe (we can't both treat and ignore the same person), I generated synthetic data based on real-world B2B behavioral patterns. The **Latent Uplift Groups** were assigned based on explicit logic:
