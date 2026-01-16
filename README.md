@@ -4,7 +4,11 @@
 
 <h1 align="center">Causalyn — Precision Account Targeting with Causal Uplift</h1>  
 
+![Status: Policy Shipped](https://img.shields.io/badge/Status-Policy_Shipped-success) ![Method: Causal Uplift (T--Learner)](https://img.shields.io/badge/Method-Causal_Uplift_(T--Learner)-blueviolet) ![Impact: Churn Risk Eliminated](https://img.shields.io/badge/Impact-Churn_Risk_Eliminated-red)
+
 > *Preventing Admin Churn While Capturing 80% of Value from 61% of Accounts*
+
+> **Decision Science | Machine Learning | Python**
 
 ---
 
