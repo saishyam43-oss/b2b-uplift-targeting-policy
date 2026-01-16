@@ -10,6 +10,10 @@
 
 > **Decision Science | Machine Learning | Python**
 
+Causalyn is a decision-grade B2B uplift targeting system that translates causal estimates into a deployable account-level policy.
+
+The system explicitly optimizes for **safe revenue**, capturing the majority of incremental value while eliminating catastrophic Admin churn risk through hard business guardrails.
+
 ---
 
 ## 🧭 Decision Summary
