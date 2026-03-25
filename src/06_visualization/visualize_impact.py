@@ -278,8 +278,8 @@ plt.ylabel('')
 plt.yticks([])
 
 plt.axvline(0, color='#222222', linestyle=':', linewidth=2, alpha=1.0)
-plt.text(0.5, plt.gca().get_ylim()[1]*0.95, "Zero Lift",
-         color='#222222', fontsize=11, fontweight='bold')
+plt.text(0, plt.gca().get_ylim()[1]*1.01, "Zero Lift",
+         color='#222222', fontsize=11, fontweight='bold', ha='center')
 
 handles = [
     mpatches.Patch(color=COLOR_TARGET, label='Targeted'),
